@@ -7,8 +7,11 @@ int[] GENRE_COLORS = {
 };
 int[] counts = new int[4];
 
+float podHours = 0;
+float songHours = 0;
+
 void setup() {
-  size(600, 400);
+  size(800,800);
   noLoop();
 
   Table table = loadTable("dearDataProject.csv", "header");
@@ -19,6 +22,20 @@ void setup() {
       for (int i = 0; i < GENRES.length; i++) {
         if (GENRES[i].equals(name)) counts[i]++;
       }
+    }
+    String time = row.getString(1);
+    String [] match = match(time, "(\\d{1,2})\\D+(\\d{1,2})");
+    int start = int(match[1]);
+    int end = int(match[2]);
+    int hours = end - start;
+    println(time + " | pod: [" + row.getString(3) + "] | " + hours);
+    if (hours<0) hours = hours + 12;
+    
+    String pod = row.getString(3);
+    if (trim(pod).length() > 0) {
+      podHours += hours;
+    } else {
+      songHours += hours;
     }
   }
 }
@@ -46,4 +63,24 @@ void draw() {
   }
   text("Podcasts", 180, 385);
   text("Songs", 420, 385);
+  
+  float biggestHours = max(podHours, songHours);
+  float podBar = map(podHours, 0, biggestHours, 0, 220);
+  float songBar = map(songHours, 0, biggestHours, 0, 220);
+  
+  fill(0);
+  text("Hours listened: podcasts vs songs (hours)", width / 2, 450);
+  
+  noStroke();
+  fill(0,255,255);
+  rect(160, 730 - podBar, 100, podBar);
+  fill(150,100,255);
+  rect(340,730 - songBar,100, songBar);
+  
+  fill(0);
+  text("Podcasts", 210, 755);
+  text("Songs", 390, 755);
+  text(podHours, 210, 720 - podBar);
+  text(songHours, 390, 720 - songBar);
 }
+  
