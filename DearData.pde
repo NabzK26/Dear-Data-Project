@@ -1,4 +1,5 @@
 String[] GENRES = { "MMA", "Comedy", "Hip-hop", "R&B" };
+StringList artists = new StringList();
 int[] GENRE_COLORS = {
   color(255, 0, 0),
   color(0, 255, 100),
@@ -37,6 +38,14 @@ void setup() {
     } else {
       songHours += hours;
     }
+    String[] artistNames = split(row.getString(4), ',');
+    for (String name : artistNames) {
+      String artist = trim(name);
+      if (artist.length() > 0 && !artists.hasValue(artist)) {
+        artists.append(artist);
+      }
+    }
+    
   }
 }
 
@@ -82,5 +91,13 @@ void draw() {
   text("Songs", 390, 755);
   text(podHours, 210, 720 - podBar);
   text(songHours, 390, 720 - songBar);
+  
+  fill(0);
+  textAlign(LEFT);
+  text("Artists listened to:", 580, 230);
+  for (int i=0; i<artists.size(); i++) {
+    text(artists.get(i), 580,260 + i *18);
+  }
+  textAlign(LEFT);
 }
   
